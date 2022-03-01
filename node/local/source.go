@@ -58,6 +58,7 @@ func NewSource(home string, encodingConfig *params.EncodingConfig) (*Source, err
 		return nil, err
 	}
 
+	loggerVar := log.NewTMLogger(log.NewSyncWriter(os.Stdout)).With("module", "explorer")
 	return &Source{
 		StoreDB: levelDB,
 
@@ -65,8 +66,8 @@ func NewSource(home string, encodingConfig *params.EncodingConfig) (*Source, err
 		LegacyAmino: encodingConfig.Amino,
 
 		BlockStore: tmstore.NewBlockStore(blockStoreDB),
-		Logger:     log.NewTMLogger(log.NewSyncWriter(os.Stdout)).With("module", "explorer"),
-		Cms:        store.NewCommitMultiStore(levelDB),
+		Logger:     loggerVar,
+		Cms:        store.NewCommitMultiStore(levelDB, loggerVar),
 	}, nil
 }
 
